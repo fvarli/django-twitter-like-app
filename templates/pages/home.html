@@ -8,18 +8,18 @@
   Welcome to Twitter
 
 <div id="tweets">
-  Replace Me!
+  Loading
 </div>
 
 <script>
   const tweets_element = document.getElementById("tweets") // get a html element
-  tweets_element.innerHTML = "Loading..." // set new html in that element
+  /*tweets_element.innerHTML = "Loading..." // set new html in that element
 
   var el1 = "<h1>Hi there 1</h1>"
   var el2 = "<h1>Hi there 2</h1>"
   var el3 = "<h1>Hi there 3</h1>"
 
-  tweets_element.innerHTML = el1 + el2 + el3
+  tweets_element.innerHTML = el1 + el2 + el3 */
 
   const xhr = new XMLHttpRequest() // xhr = Some Class()
   const method = 'GET' // POST
@@ -30,8 +30,17 @@
   xhr.open(method, url)
   xhr.onload = function () {
     const server_response = xhr.response
-    var listed_items = server_response.response
-    console.log(listed_items)
+    const listed_items = server_response.response //array
+    var final_tweet_str = ""
+    var i;
+    for(i=0; i<listed_items.length; i++){
+      console.log(i)
+      console.log(listed_items[i])
+      var current_item = "<div class='mb-4'><h1>" + listed_items[i].id + "</h1>" + "<p>" + listed_items[i].content + "</p></div>"
+      final_tweet_str += current_item
+    }
+    tweets_element.innerHTML = final_tweet_str
+    //console.log(listed_items)
   }
   xhr.send()
 
