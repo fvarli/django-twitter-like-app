@@ -26,6 +26,24 @@
   const url = "/tweets"
   const responseType = "json"
 
+  function handle_did_like(tweet_id, current_cont) {
+    console.log(tweet_id, current_cont)
+    current_cont++
+    return
+  }
+  function like_btn(tweet) {
+    return "<button class='btn btn-primary btn-sm' onclick='handle_did_like(" + tweet.id + "," + tweet.likes +")'>"+ tweet.likes +" Like</button>"
+  }
+
+  function format_tweet_element(tweet){
+
+    var formatted_tweet = "<div class='mb-4 tweet' id='tweet-" + tweet.id +" '><h1>" + tweet.id
+            + "</h1>" + "<p>" + tweet.content +
+            "</p><div class='btn-group'>" + like_btn(tweet) +
+            "</div></div>"
+
+    return formatted_tweet
+  }
   xhr.responseType = responseType
   xhr.open(method, url)
   xhr.onload = function () {
@@ -34,9 +52,8 @@
     var final_tweet_str = ""
     var i;
     for(i=0; i<listed_items.length; i++){
-      console.log(i)
-      console.log(listed_items[i])
-      var current_item = "<div class='mb-4'><h1>" + listed_items[i].id + "</h1>" + "<p>" + listed_items[i].content + "</p></div>"
+      var tweet_obj = listed_items[i]
+      var current_item = format_tweet_element(tweet_obj)
       final_tweet_str += current_item
     }
     tweets_element.innerHTML = final_tweet_str
