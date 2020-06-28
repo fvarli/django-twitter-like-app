@@ -16,7 +16,10 @@
       <form action="/create_tweet" class="form" method="post" id="tweet_create_form">
         {% csrf_token %}
         <input type="hidden" value="/" name="next" />
-        <textarea class="form-control" name="content" placeholder="What's Happening?"></textarea>
+        <textarea required="required" class="form-control" name="content" placeholder="What's Happening?"></textarea>
+        <br>
+        <div class="d-none alert alert-danger" id="tweet_create_form_error"></div>
+        <br>
         <button type="submit" class="btn btn-primary">Tweet</button>
       </form>
     </div>
@@ -28,6 +31,18 @@
 
 <script>
 
+  function handle_tweet_form_error(msg, display) {
+    var my_error_div = document.getElementById('tweet_create_form_error')
+    if(display === true){
+      // show error
+      my_error_div.setAttribute("class", "d-block alert alert-danger")
+      my_error_div.innerText = msg
+    }else {
+      // hide error
+      my_error_div.setAttribute("class", "d-none alert alert-danger")
+    }
+  }
+
   function handle_tweet_create_form_did_submit(event) {
     event.preventDefault()
     const my_form = event.target
@@ -35,15 +50,43 @@
     const url = my_form.getAttribute("action")
     const method = my_form.getAttribute("method")
     const xhr = new XMLHttpRequest()
+    const responseType = "json"
+    xhr.responseType = responseType
     xhr.open(method, url)
     xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
     xhr.onload = function () {
-      const server_response = xhr.response
-      console.log(xhr.status, server_response)
-      const tweets_el = document.getElementById("tweets")
-      load_tweets(tweets_el)
+      if(xhr.status === 201){
+        handle_tweet_form_error("", false)
+        const new_tweet_json = xhr.response
+        console.log(new_tweet_json.likes)
+        const new_tweet_el = format_tweet_element(new_tweet_json)
+        console.log(new_tweet_el);
+        const og_html = tweets_container_element.innerHTML
+        tweets_container_element.innerHTML = new_tweet_el + og_html
+        my_form.reset()
+      }else if(xhr.status === 400){
+        const error_json = xhr.response
+        const  content_error = error_json.content
+        let content_error_message;
+        if(content_error){
+          content_error_message = content_error[0]
+          if(content_error_message){
+            handle_tweet_form_error(content_error_message, true)
+          }else{
+            alert("An error occurred. Please try again later!")
+          }
+        }else{
+          alert("An error occurred. Please try again later!")
+        }
+        console.log(content_error_message)
+        alert(content_error_message)
+
+      }else if(xhr.status === 500){
+        alert("There was a server error, please try again later!")
+      }
     }
+
     xhr.send(my_form_data)
   }
   
@@ -51,14 +94,13 @@
 
   tweet_create_form_element.addEventListener("submit", handle_tweet_create_form_did_submit)
 
-  const tweets_el = document.getElementById("tweets")
+  const tweets_container_element = document.getElementById("tweets")
 
   function load_tweets (tweets_element) {
     const xhr = new XMLHttpRequest() // xhr = Some Class()
     const method = 'GET' // POST
     const url = "/tweets"
     const responseType = "json"
-
     xhr.responseType = responseType
     xhr.open(method, url)
     xhr.onload = function () {
@@ -77,7 +119,7 @@
     xhr.send()
   }
 
-  load_tweets(tweets_el)
+  load_tweets(tweets_container_element)
 
   function handle_did_like(tweet_id, current_cont) {
     console.log(tweet_id, current_cont)
