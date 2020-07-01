@@ -1,10 +1,11 @@
 1. Tweets
-    ->Creating
-        ->Text
-        ->Image
-    ->Delete
-    ->Retweeting
-    ->Liking
+    ->User Permissions
+        ->Creating
+            ->Text
+            ->Image
+        ->Delete
+        ->Retweeting
+        ->Liking
     
 2. Users
     -> Register

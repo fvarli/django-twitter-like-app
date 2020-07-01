@@ -10,19 +10,35 @@ ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
 
 def home_view(request, *args, **kwargs):
-    #print(request.user)
+    # print(request.user)
     # return HttpResponse("<h1>Hello World!</h1>")
     return render(request, 'pages/home.html', context={}, status=200)
 
 
 def tweet_create_view(request, *args, **kwargs):
+    """
+    REST API Create View -> DRF
+    :param request:
+    :param args:
+    :param kwargs:
+    :return:
+
+    """
+
+    user = request.user
     # print("ajax", request.is_ajax())
+    if not request.user.is_authenticated:
+        user = None
+        if request.is_ajax():
+            return JsonResponse({}, status=401)
+        return redirect(settings.LOGIN_URL)
     form = TweetForm(request.POST or None)
     # print('post data is:', request.POST)
     next_url = request.POST.get("next") or None
     # print("next_url", next_url)
     if form.is_valid():
         obj = form.save(commit=False)
+        obj.user = user
         obj.save()
         if request.is_ajax():
             return JsonResponse(obj.serialize(), status=201)  # 201 == created items
