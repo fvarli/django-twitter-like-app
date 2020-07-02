@@ -108,7 +108,7 @@
     xhr.open(method, url)
     xhr.onload = function () {
       const server_response = xhr.response
-      const listed_items = server_response.response //array
+      const listed_items = server_response //array
       var final_tweet_str = ""
       var i;
       for(i=0; i<listed_items.length; i++){
@@ -135,8 +135,8 @@
 
   function format_tweet_element(tweet){
 
-    var formatted_tweet = "<div class='col-12 col-md-10 mx-auto border rounded py-3 mb-4 tweet' id='tweet-" + tweet.id +" '><h1>" + tweet.id
-            + "</h1>" + "<p>" + tweet.content +
+    var formatted_tweet = "<div class='col-12 col-md-10 mx-auto border rounded py-3 mb-4 tweet' id='tweet-" + tweet.id +" '>"
+              +"<p>" + tweet.content +
             "</p><div class='btn-group'>" + like_btn(tweet) +
             "</div></div>"
 
