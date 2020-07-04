@@ -5,7 +5,7 @@
             ->Image
         ->Delete
         ->Retweeting
-        ->Liking
+        ->Liking or Unliking
     
 2. Users
     -> Register

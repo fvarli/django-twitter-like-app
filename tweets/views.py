@@ -7,7 +7,9 @@ from .models import Tweet
 from django.utils.http import is_safe_url
 from .serializers import TweetSerializer
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
@@ -18,7 +20,9 @@ def home_view(request, *args, **kwargs):
     return render(request, 'pages/home.html', context={}, status=200)
 
 
-@api_view(['POST']) # http method the client == POST
+@api_view(['POST'])  # http method the client == POST
+# @authentication_classes([SessionAuthentication, MyCustomAuth])
+@permission_classes([IsAuthenticated])  # REST API Course
 def tweet_create_view(request, *args, **kwargs):
     serializer = TweetSerializer(data=request.POST)
     if serializer.is_valid(raise_exception=True):
@@ -41,7 +45,22 @@ def tweet_detail_view(request, tweet_id, *args, **kwargs):
         return Response({}, status=404)
     obj = qs.first()
     serializer = TweetSerializer(obj)
-    return Response(serializer.data)
+    return Response(serializer.data, status=200)
+
+
+@api_view(['DELETE', 'POST'])
+@permission_classes([IsAuthenticated])  # REST API Course
+def tweet_delete_view(request, tweet_id, *args, **kwargs):
+    qs = Tweet.objects.filter(id=tweet_id)
+    if not qs.exists():
+        return Response({}, status=404)
+    qs = qs.filter(user=request.user)
+    if not qs.exists():
+        return Response({"message": "You can not delete this tweet."}, status=401)
+    obj = qs.first()
+    obj.delete()
+    return Response({"message": "Tweet deleted"}, status=200)
+
 
 def tweet_create_view_pure_django(request, *args, **kwargs):
     """
@@ -115,4 +134,4 @@ def tweet_detail_view_pure_django(request, tweet_id, *args, **kwargs):
         data['message'] = "Not found"
         status = 404
 
-    return JsonResponse(data, status=status)   # json.dumps content_type='application/json'
+    return JsonResponse(data, status=status)  # json.dumps content_type='application/json'
