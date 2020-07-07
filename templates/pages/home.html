@@ -144,7 +144,7 @@
   load_tweets(tweets_container_element)
 
   function handle_tweet_action_btn(tweet_id, current_cont, action) {
-    console.log(tweet_id, current_cont,action)
+    //console.log(tweet_id, current_cont, action)
     const url = "/api/tweets/action"
     const method="POST"
     const data = JSON.stringify({
@@ -160,9 +160,11 @@
     xhr.setRequestHeader("X-CSRFToken", csrftoken)
     xhr.onload = function() {
         // react.js this handle the state much better
+        //console.log(xhr.status, xhr.response)
         load_tweets(tweets_container_element)
     }
     xhr.send(data)
+    console.log(xhr.send(data))
     return
 }
 
