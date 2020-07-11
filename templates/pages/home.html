@@ -126,16 +126,7 @@
     xhr.responseType = responseType
     xhr.open(method, url)
     xhr.onload = function () {
-      const server_response = xhr.response
-      const listed_items = server_response //array
-      var final_tweet_str = ""
-      var i;
-      for(i=0; i<listed_items.length; i++){
-        var tweet_obj = listed_items[i]
-        var current_item = format_tweet_element(tweet_obj)
-        final_tweet_str += current_item
-      }
-      tweets_element.innerHTML = final_tweet_str
+n
       //console.log(listed_items)
   }
     xhr.send()

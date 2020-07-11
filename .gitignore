@@ -1,3 +1,5 @@
 .idea
 venv
 db.sqlite3
+tweetme-webapp/node_modules/
+node_modules
