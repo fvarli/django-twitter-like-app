@@ -1,21 +1,6 @@
 import React, {useEffect, useState} from "react";
+import {load_tweets} from '../lookup';
 
-  function load_tweets (callback) {
-    const xhr = new XMLHttpRequest() // xhr = Some Class()
-    const method = 'GET' // POST
-    const url = "http://localhost:8000/api/tweets/"
-    const responseType = "json"
-    xhr.responseType = responseType
-    xhr.open(method, url)
-    xhr.onload = function () {
-      callback(xhr.response, xhr.status)
-  }
-    xhr.onerror = function (e){
-      console.log(e)
-      callback({"message": "The request was an error."}, 400)
-    }
-    xhr.send()
-  }
 
   export function TweetsList() {
     const [tweets, setTweets] = useState([])
@@ -41,7 +26,17 @@ import React, {useEffect, useState} from "react";
   export function ActionBtn(props) {
     const {tweet, action} = props
     const className = props.className ? props.className: 'btn btn-primary btn-sm'
-    return action.type === 'like' ? <button className={className}>{tweet.likes} Likes</button> : null
+    const actionDislplay = action.display ? action.display : 'Action'
+    let likes = tweet.likes
+    const handleClick = (event) => {
+      event.preventDefault()
+      if (action.type === 'like') {
+        console.log(tweet.likes+1)
+        likes = tweet.likes+1
+      }
+    }
+    const display = action.type === 'like' ? `${likes} ${actionDislplay}` : actionDislplay
+    return <button className={className} onClick={handleClick}>{display}</button>
   }
 
   export function Tweet(props) {
@@ -50,8 +45,9 @@ import React, {useEffect, useState} from "react";
     return <div className={className}>
       <p>{tweet.id} - {tweet.content}</p>
       <div className='btn btn-group'>
-        <ActionBtn tweet={tweet} action={{type:"like"}}/>
-        <ActionBtn tweet={tweet} action={{type:"unlike"}}/>
+        <ActionBtn tweet={tweet} action={{type:"retweet", display:"Retweet"}}/>
+        <ActionBtn tweet={tweet} action={{type:"like", display:"Likes"}}/>
+        <ActionBtn tweet={tweet} action={{type:"unlike", display:"Unlike"}}/>
       </div>
     </div>
   }
