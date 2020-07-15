@@ -2,6 +2,33 @@ import React, {useEffect, useState} from "react";
 import {load_tweets} from '../lookup';
 
 
+  export function TweetsComponents(props) {
+    const textAreaRef = React.createRef()
+    const handleSubmit = (event) => {
+      event.preventDefault()
+      // console.log(event)
+      // console.log(textAreaRef.current.value)
+      const newValue = textAreaRef.current.value
+      console.log(newValue)
+      textAreaRef.current.value = ''
+    }
+    const divStyle = {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }
+    return <div className={props.className}>
+      <div style={divStyle}>
+          <form onSubmit={handleSubmit}>
+          <textarea ref={textAreaRef} required={true} name="tweet" id="" className='form-control'>
+
+          </textarea>
+          <button type='submit' className='btn btn-primary my-3'>Tweet</button>
+          </form>
+        </div>
+      <TweetsList />
+    </div>
+  }
   export function TweetsList() {
     const [tweets, setTweets] = useState([])
 
